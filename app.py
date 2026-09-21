@@ -2,9 +2,10 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
-from flask_login import UserMixin
+from flask_login import UserMixin, login_user, LoginManager
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "minha_chave_123";
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
 
 
@@ -25,7 +26,12 @@ swagger_ui_blueprint = get_swaggerui_blueprint(
 
 app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 
+# Configurações de Login
+login_manager = LoginManager()
+
 db = SQLAlchemy(app)
+login_manager.init_app(app)
+login_manager.login_view ='login'
 CORS(app)
 
 # Modelagem
@@ -119,6 +125,20 @@ def get_products():
         product_list.append(product_data)
 
     return jsonify(product_list)
+
+
+# ROTA DE LOGIN
+@app.route('/login', methods=["POST"])
+def login():
+    data = request.json
+    user = User.query.filter_by(username=data.get("username")).first()
+
+    if user and data.get("password") == user.password:
+        return jsonify({"message": "Logged in Succesfully"})
+    
+    return jsonify({"message": "Unauthorized. Invalid credentials"}), 401
+
+
 
 
 # ROTA PADRAO
