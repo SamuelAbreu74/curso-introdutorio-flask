@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
+from flask_login import UserMixin
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
@@ -27,9 +28,15 @@ app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 db = SQLAlchemy(app)
 CORS(app)
 
-
 # Modelagem
-# Produto (id, name, price, description)
+# User (id, username, password)
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), nullable=False, unique=True)
+    password = db.Column(db.String(80), nullable=False)
+    
+# Modelagem
+# Product (id, name, price, description)
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
