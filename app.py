@@ -1,9 +1,28 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_swagger_ui import get_swaggerui_blueprint
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
+
+
+# Configurações do Swagger UI
+SWAGGER_URL = '/swagger'
+API_URL = '/static/swagger.yaml'
+
+
+# Blueprint do Swagger
+swagger_ui_blueprint = get_swaggerui_blueprint(
+     SWAGGER_URL,
+     API_URL,
+     config={
+          'API E-Commerce': "Minha API Flask"
+     }
+)
+
+
+app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 
 db = SQLAlchemy(app)
 CORS(app)
