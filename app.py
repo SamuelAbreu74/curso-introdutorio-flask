@@ -200,6 +200,27 @@ def remove_from_cart(product_id):
     return jsonify({'message: ': 'Failed to remove item from cart'}), 400
 
 
+# ROTA DE BUSCAR TODOS OS ITEMS DO CARRINHO
+@app.route('/api/cart/', methods=["GET"])
+@login_required
+def view_cart():
+    user = User.query.get(current_user.id)
+    cart_items = user.cart
+    cart_content = []
+
+    for item in cart_items:
+        product = Product.query.get(item.product_id)
+
+        cart_content.append({
+            "id": item.id,
+            "user_id": item.user_id,
+            "product_id": item.product_id,
+            "product_name": product.name,
+            "product_price": product.price
+        })
+    return jsonify(cart_content)
+    
+
 #  =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # ROTA PADRAO
