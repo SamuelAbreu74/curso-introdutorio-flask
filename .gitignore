@@ -4,9 +4,7 @@ venv/
 # Cache do Python
 __pycache__/
 
-# Banco de dados local (SQLite)
-instance/
-*.db
+
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml

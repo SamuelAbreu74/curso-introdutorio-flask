@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -5,14 +6,15 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
 application = Flask(__name__)
-application.config['SECRET_KEY'] = "minha_chave_123";
-application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
+application.config['SECRET_KEY'] = "minha_chave_123"
 
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(BASE_DIR, 'ecommerce.db')
 
 # Configurações do Swagger UI
 SWAGGER_URL = '/swagger'
 API_URL = '/static/swagger.yaml'
-
 
 # Blueprint do Swagger
 swagger_ui_blueprint = get_swaggerui_blueprint(
@@ -23,7 +25,6 @@ swagger_ui_blueprint = get_swaggerui_blueprint(
      }
 )
 
-
 application.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 
 # Configurações de Login
@@ -33,10 +34,6 @@ db = SQLAlchemy(application)
 login_manager.init_app(application)
 login_manager.login_view ='login'
 CORS(application)
-
-# Cria tabelas automaticamente quando fizer Deploy
-with application.app_context():
-    db.create_all()
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -50,7 +47,6 @@ class User(db.Model, UserMixin):
     
 
 # Product (id, name, price, description)
-
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
@@ -62,6 +58,10 @@ class CartItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+
+
+with application.app_context():
+    db.create_all()
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -90,7 +90,6 @@ def login():
 def logout():
     logout_user()
     return jsonify({"message": "Logout Succesfully"})
-
 
 
 # ROTA DE ADD
@@ -239,8 +238,6 @@ def checkout():
         return jsonify({'message: ': 'Checkout successful. Cart has been cleared.'})
 
     return jsonify({'message:': 'Unauthorized. User not logged in'}), 401
-    
-
     
 #  =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
