@@ -7,3 +7,7 @@ __pycache__/
 # Banco de dados local (SQLite)
 instance/
 *.db
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
