@@ -34,6 +34,10 @@ login_manager.init_app(application)
 login_manager.login_view ='login'
 CORS(application)
 
+# Cria tabelas automaticamente quando fizer Deploy
+with application.app_context():
+    db.create_all()
+
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # Modelagem
