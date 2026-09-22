@@ -60,8 +60,17 @@ class CartItem(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
 
 
-# with application.app_context():
-#     db.create_all()
+with application.app_context():
+    db.create_all()
+
+    if not User.query.first():
+        user_inicial = User(
+            username="admin", 
+            password="123"
+        )
+        db.session.add(user_inicial)
+        db.session.commit()
+        print("Usuário inicial 'admin' criado com sucesso!")
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
