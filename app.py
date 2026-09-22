@@ -219,8 +219,25 @@ def view_cart():
             "product_price": product.price
         })
     return jsonify(cart_content)
+
+# ROTA DE CHECKOUT
+@app.route('/api/cart/checkout', methods=["POST"])
+@login_required
+def checkout():
+    user = User.query.get(current_user.id)
+    cart_items = user.cart
+    
+    if user:
+        for item in cart_items:
+            db.session.delete(item)
+        db.session.commit()
+        
+        return jsonify({'message: ': 'Checkout successful. Cart has been cleared.'})
+
+    return jsonify({'message:': 'Unauthorized. User not logged in'}), 401
     
 
+    
 #  =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # ROTA PADRAO
